@@ -1,0 +1,35 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+%labels
+    Maintainer "NepaliGPT"
+    Description "CPU-only PyTorch + Horovod (MPI+Gloo) image for HPC clusters"
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        openmpi-bin libopenmpi-dev \
+        python3 python3-pip python3-dev \
+        git wget ca-certificates \
+        && rm -rf /var/lib/apt/lists/*
+
+    python3 -m pip install --no-cache-dir --upgrade pip
+    # CPU-only PyTorch (no CUDA)
+    pip install --no-cache-dir torch==2.3.1 torchvision==0.18.1
+    # Horovod (CPU): enable PyTorch + MPI + Gloo
+    HOROVOD_WITH_PYTORCH=1 HOROVOD_WITH_MPI=1 HOROVOD_WITH_GLOO=1 \
+    pip install --no-cache-dir horovod==0.28.1
+
+    # Useful extras
+    pip install --no-cache-dir lightning>=2.3 datasets transformers
+
+%environment
+    export OMP_NUM_THREADS=2
+    export TOKENIZERS_PARALLELISM=false
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export PYTHONUNBUFFERED=1
+
+%runscript
+    exec python3 "$@"

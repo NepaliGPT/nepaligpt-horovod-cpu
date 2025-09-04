@@ -1,0 +1,8 @@
+torch>=2.2
+torchvision
+horovod[pytorch]>=0.28
+lightning>=2.3
+datasets
+transformers
+mpi4py
+pytest

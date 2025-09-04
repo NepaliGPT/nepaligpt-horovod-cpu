@@ -1,0 +1,17 @@
+name: hvd-cpu
+channels:
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.10
+  - pip
+  - pytorch
+  - torchvision
+  - numpy
+  - mpi4py                # useful for Horovod on MPI clusters
+  - pip:
+      - horovod[pytorch]>=0.28
+      - lightning>=2.3
+      - datasets
+      - transformers
+      - pytest             # for running tests
